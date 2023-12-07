@@ -7,7 +7,8 @@ const path = require('path');
 // Import custom routers
 const signupRouter = require("./routes/signupRouter");
 const signinRouter = require("./routes/signinRouter");
-const booksRouter = require("./routes/booksRouter");
+const projectRouter = require("./routes/projectRouter");
+const taskRouter = require("./routes/taskRouter");
 
 const app = express();
 require("dotenv").config(); // Load environment variables from a .env file
@@ -47,9 +48,11 @@ app.use(cookieParser());
 app.get('/',(req,res)=>{
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 })
-app.use('/book',booksRouter)
+
 app.use('/signup',signupRouter)
 app.use('/signin',signinRouter)
+app.use('/project',projectRouter)
+app.use('/task',taskRouter)
 
 module.exports = app;
 

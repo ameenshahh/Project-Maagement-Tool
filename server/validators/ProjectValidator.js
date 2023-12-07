@@ -1,0 +1,13 @@
+const { body, param, validationResult } = require("express-validator");
+
+exports.addProjectValidator = [
+  body("name").notEmpty().withMessage("Name is required"),
+  body("description").notEmpty().withMessage("Description is required"),
+];
+
+exports.getProjectByIdValidator = [
+  param("projectId").isMongoId().withMessage("Invalid project ID"),
+];
+
+
+
