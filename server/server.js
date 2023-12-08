@@ -9,6 +9,7 @@ const signupRouter = require("./routes/signupRouter");
 const signinRouter = require("./routes/signinRouter");
 const projectRouter = require("./routes/projectRouter");
 const taskRouter = require("./routes/taskRouter");
+const logoutRouter = require("./routes/logoutRouter");
 
 const app = express();
 require("dotenv").config(); // Load environment variables from a .env file
@@ -51,6 +52,7 @@ app.get('/',(req,res)=>{
 
 app.use('/signup',signupRouter)
 app.use('/signin',signinRouter)
+app.use('/logout',logoutRouter)
 app.use('/project',projectRouter)
 app.use('/task',taskRouter)
 

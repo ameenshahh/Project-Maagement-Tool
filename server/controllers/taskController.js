@@ -1,8 +1,7 @@
-const BooksModel = require("../models/BooksModel");
+const TaskModel = require("../models/TaskModel");
 const { validationResult } = require("express-validator");
 
-// Function to add a new book
-exports.addBook = async (req, res) => {
+exports.addTask = async (req, res) => {
   // input validation
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -10,33 +9,34 @@ exports.addBook = async (req, res) => {
   }
 
   try {
-    const { title, author, summary, isbn } = req.body;
 
-    // Create a new book using the BooksModel schema
-    const book = new BooksModel({ title, author, summary, isbn });
-    await book.save();
+
+    // Create a new task using the TaskModel schema
+    const task = new TaskModel(req.body);
+    await task.save();
 
     res
       .status(201)
-      .json({ status: true, message: "Book added successfully", data: book });
+      .json({ status: true, message: "Task added successfully", data: task });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Error adding book" });
+    console.log(error)
+    res.status(500).json({ status: false, message: "Error adding task" });
   }
 };
 
-// Function to get all books
-exports.getAllBooks = async (req, res) => {
+// Function to get all tasks
+exports.getAllTasks = async (req, res) => {
   try {
-    // Retrieve all books from the database
-    const books = await BooksModel.find();
-    res.status(200).json({ status: true, data: books });
+    // Retrieve all tasks from the database
+    const tasks = await TaskModel.find({ projectId: req.params.projectId });
+    res.status(200).json({ status: true, data: tasks });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Error fetching books" });
+    res.status(500).json({ status: false, message: "Error fetching tasks" });
   }
 };
 
-// Function to get a book by its ID
-exports.getBookById = async (req, res) => {
+// Function to update a task
+exports.editTask = async (req, res) => {
   // input validation
 
   const errors = validationResult(req);
@@ -45,53 +45,28 @@ exports.getBookById = async (req, res) => {
   }
 
   try {
-    // Find a book by its unique ID
-    const book = await BooksModel.findById(req.params.bookId);
-    if (!book) {
-      return res.status(404).json({ status: false, message: "Book not found" });
-    }
-    res
-      .status(200)
-      .json({ message: "Book details received successfully", data: book });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ status: false, message: "Error fetching book details" });
-  }
-};
-
-// Function to update a book
-exports.updateBook = async (req, res) => {
-  // input validation
-
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array()[0].msg });
-  }
-
-  try {
-    const { title, author, summary, isbn } = req.body;
-    // Update an existing book by its ID
-    const updatedBook = await BooksModel.findByIdAndUpdate(
-      req.params.bookId,
-      { title, author, summary, isbn },
+    const { name, description, projectId, status } = req.body;
+    // Update an existing task by its ID
+    const updatedTask = await TaskModel.findByIdAndUpdate(
+      req.params.taskId,
+      { name, description, projectId, status },
       { new: true }
     );
-    if (!updatedBook) {
-      return res.status(404).json({ status: false, message: "Book not found" });
+    if (!updatedTask) {
+      return res.status(404).json({ status: false, message: "task not found" });
     }
     res.status(200).json({
       status: true,
-      message: "Book updated successfully",
-      data: updatedBook,
+      message: "task updated successfully",
+      data: updatedTask,
     });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Error updating book" });
+    res.status(500).json({ status: false, message: "Error updating task" });
   }
 };
 
-// Function to delete a book
-exports.deleteBook = async (req, res) => {
+// Function to delete a Task
+exports.deleteTask = async (req, res) => {
   // input validation
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -99,17 +74,17 @@ exports.deleteBook = async (req, res) => {
   }
 
   try {
-    // Delete a book by its ID
-    const deletedBook = await BooksModel.findByIdAndDelete(req.params.bookId);
-    if (!deletedBook) {
-      return res.status(404).json({ status: false, message: "Book not found" });
+    // Delete a Task by its ID
+    const deletedTask = await TaskModel.findByIdAndDelete(req.params.taskId);
+    if (!deletedTask) {
+      return res.status(404).json({ status: false, message: "Task not found" });
     }
     res.status(200).json({
       status: true,
-      message: "Book deleted successfully",
-      data: deletedBook,
+      message: "Task deleted successfully",
+      data: deletedTask,
     });
   } catch (error) {
-    res.status(500).json({ status: false, message: "Error deleting book" });
+    res.status(500).json({ status: false, message: "Error deleting Task" });
   }
 };

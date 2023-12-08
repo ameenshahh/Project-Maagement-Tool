@@ -4,15 +4,13 @@ const UserModel = require("../models/UserModel");
 exports.authenticate = async (req, res, next) => {
   const token = req.header("authorization");
   try {
-    if (!token.startsWith("Bearer ")) {
-      return res
-        .status(403)
-        .json({ message: "Authorisation header should start with Bearer" });
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.status(404).json({ message: "No token found" });
     }
 
-    const tokenValue = token.slice(7);
-
-    jwt.verify(tokenValue, process.env.SECRET_KEY, async (err, user) => {
+    jwt.verify(token, process.env.SECRET_KEY, async (err, user) => {
       if (err) {
         return res.status(403).json({ message: "Token verification failed." });
       }

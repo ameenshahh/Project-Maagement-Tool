@@ -24,8 +24,7 @@ const signin = async (req, res) => {
     const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
     const dbUser = await UserModel.findOne({ email });
 
-    
-
+    res.cookie('token', token, { httpOnly: true });
     res.json({ dbUser,token });
   } catch (error) {
     console.error(error);
